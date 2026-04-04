@@ -1,4 +1,3 @@
-
 export const DEFAULT_PARAMS = {
   BUY_TH: 0.72,
   SELL_TH: 0.28,
