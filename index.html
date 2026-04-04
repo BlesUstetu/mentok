@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html>
+<body style="background:#0b0f14;color:#fff;font-family:sans-serif;padding:20px">
+<h1>AI SIGNAL FINAL V2</h1>
+
+<select id="pair">
+<option>BTCUSDT</option>
+<option>ETHUSDT</option>
+<option>SOLUSDT</option>
+</select>
+
+<h2 id="price"></h2>
+<h2 id="signal"></h2>
+<p id="info"></p>
+
+<script>
+async function load(){
+  const pair=document.getElementById("pair").value;
+  const r=await fetch("/api/signal?symbol="+pair);
+  const d=await r.json();
+
+  document.getElementById("price").innerText="Price: "+d.price;
+  document.getElementById("signal").innerText="Signal: "+d.action+" ("+d.confidence+"%)";
+  document.getElementById("info").innerText="Sweep: "+d.sweep+" | BOS: "+d.bos;
+}
+setInterval(load,3000);
+</script>
+</body>
+</html>
