@@ -1,39 +1,14 @@
-export const config = {
-  runtime: "edge"
-};
+import WebSocket from "ws";
 
-export default async function handler() {
-  try {
-    const r = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT");
+let price = 0;
 
-    const text = await r.text();
+const ws = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@trade");
 
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch {
-      return new Response(JSON.stringify({
-        error: "Invalid JSON from Binance",
-        raw: text
-      }), { status: 500 });
-    }
+ws.on("message", (msg) => {
+  const data = JSON.parse(msg);
+  price = Number(data.p);
+});
 
-    if (!data.price) {
-      return new Response(JSON.stringify({
-        error: "No price field",
-        response: data
-      }), { status: 500 });
-    }
-
-    return new Response(JSON.stringify({
-      price: Number(data.price)
-    }), {
-      headers: { "Content-Type": "application/json" }
-    });
-
-  } catch (e) {
-    return new Response(JSON.stringify({
-      error: e.message
-    }), { status: 500 });
-  }
+export default function handler(req, res) {
+  res.status(200).json({ price });
 }
